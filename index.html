@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        body {
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        .books-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .book {
+            background: #2C2C2C;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px #000;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .book img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .book h2 {
+            color: #eee;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .book p {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .book .rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .book .rating img {
+            width: 20px;
+        }
+
+        .book .summary {
+            color: #eee;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .books-container {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="books-container" id="books-container">
+            <!-- Books will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        const sheetUrl = 'https://sheets.googleapis.com/v4/spreadsheets/1eFNyOTc1sjFwoBYA5FzB4f-ecGs0w-COjOZ_mXLWBbo/values/Sheet1!A1:I100?key=YOUR_API_KEY';
+
+        const booksContainer = document.getElementById('books-container');
+
+        // Fetch books data from Google Sheets API
+        fetch(sheetUrl)
+            .then(response => response.json())
+            .then(data => {
+                const booksData = data.values.slice(1); // Exclude header row
+                
+                booksData.forEach(book => {
+                    const [title, cover, author, pages, genre, releaseDate, rating, summary, review] = book;
+                    
+                    // Create book element
+                    const bookElement = document.createElement('div');
+                    bookElement.classList.add('book');
+                    
+                    bookElement.innerHTML = `
+                        <img src="${cover}" alt="${title} Cover">
+                        <h2>${title}</h2>
+                        <div class="rating">
+                            <img src="https://static.vecteezy.com/system/resources/thumbnails/009/342/559/small/mobile-game-golden-star-clipart-design-illustration-free-png.png">
+                            <h4>${rating}</h4>
+                        </div>
+                        <p><strong>Author:</strong> ${author}</p>
+                        <p><strong>Pages:</strong> ${pages}</p>
+                        <p><strong>Genre:</strong> ${genre}</p>
+                        <p><strong>Release Date:</strong> ${releaseDate}</p>
+                        <p class="summary">${summary}</p>
+                        <a href="book.html?title=${encodeURIComponent(title)}">View Details</a>
+                    `;
+                    
+                    booksContainer.appendChild(bookElement);
+                });
+            })
+            .catch(error => console.error('Error fetching books data:', error));
+    </script>
+</body>
+</html>
