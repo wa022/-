@@ -1,0 +1,362 @@
+
+    <style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  transition:all .3s;
+  font-family: 'Roboto Mono', monospace;
+}
+
+
+.logo{
+  position:absolute;
+  bottom:5px;
+  left:10px;
+  display:flex;
+  justify-content:center;
+  align-items:end;
+  font-size:1em;
+}
+
+.logo img{
+  width:40px;
+}
+
+.logo p{
+  color:#000;
+  font-weight:700;
+  margin-bottom:2px;
+}
+
+body{
+  background:#000;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+
+
+body:before{
+  content:"";
+  position:absolute;
+  top:50vh;
+  left:0;
+  z-index:-1;
+  width:100%;
+  height:50vh;
+  background:#FF3434; 
+}
+
+
+.container{
+  background:#2C2C2C;
+  width:650px;
+  padding:20px 30px;
+  border-radius:8px;
+  box-shadow:0 0 15px #000;
+}
+
+
+
+.search-container{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+}
+
+
+.search-container input{
+  border:0;
+  outline:0;
+  background:none;
+  color:#eee;
+  outline:1.5px solid #FF3434;
+  width:100%;
+  padding:10px 20px;
+  border-radius:5px;
+  caret-color:#ff3434;
+}
+
+
+.search-container button{
+  padding:10px 35px;
+  border:0;
+  outline:0;
+  border-radius:5px;
+  color:#000;
+  background:#FF3434;
+  text-transform:uppercase;
+  font-weight:700;
+  cursor:pointer;
+}
+
+
+.search-container button:hover,
+.search-container button:active{
+  background:#000;
+  color:#FF3434;
+}
+
+
+
+
+.info{
+  color:#eee;
+  margin-top:15px;
+  display:flex;
+  gap:5px;
+}
+
+
+.info .poster{
+  width:200px;
+  height:280px;
+  object-fit:cover;
+  border-radius:5px;
+}
+
+
+.info div{
+  width:100%;
+  position:relative;
+}
+
+
+.info div h2{
+  text-transform:uppercase;
+  text-align:center;
+  margin-top:60px;
+}
+
+
+.info div .rating{
+  margin-top:6px;
+  display:flex;
+  justify-content:center;
+  aling-items:center;
+  gap:8px;
+}
+
+.info div .rating img{
+  width:20px;
+}
+
+
+.info div .details{
+  text-align:center;
+  margin-top:25px;
+  color:#a0a0a0;
+  font-size:.85em;
+}
+
+.info div .genre{
+  text-align:center;
+  margin-top:5px;
+}
+
+.info div .boxOffice{
+  position:absolute;
+  bottom:0;
+  right:0;
+  font-size:.70em;
+}
+
+
+h3{
+  color:#eee;
+  margin-top:10px;
+}
+
+p{
+  color:#a0a0a0;
+  font-size:.75em;
+  margin-top:5px;
+}
+
+
+@media (min-width: 0px) and (max-width: 680px){
+  
+.container{
+  width:350px;
+  padding:20px 30px;
+}
+  
+  
+  .search-container button{
+    padding:12.5px 20px;
+    font-size:.65em;
+}
+    
+  
+  .info .poster{
+  width:120px;
+  height:150px;
+ }
+  
+  
+  .info div h2{
+  margin-top:15px;
+  font-size:.95em;
+}
+  
+  
+  .info div .rating{
+    font-size:.60em;
+}
+
+.info div .rating img{
+  width:12px;
+}
+  
+  .info div .details{
+  text-align:center;
+  margin-top:15px;
+  color:#a0a0a0;
+  font-size:.65em;
+}
+
+.info div .genre{
+  font-size:.70em;
+}
+  
+  h3{
+    font-size:.95em;
+    margin-top:15px;
+}
+  
+    p{
+    font-size:.60em;
+   }
+  
+  .info div .boxOffice{
+  bottom:-10px;
+  font-size:.55em;
+}
+  
+}
+    </style>
+    
+    
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bacasime+Antique&family=Rajdhani&family=Roboto+Mono&family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+<!----IMDB Rating----->
+<div class="container">
+  <div class="search-container">
+    <input 
+           type="text"
+           placeholder="Enter movie name here..."
+           id="movie-name"
+           value="John Wick: Chapter 4"
+           />
+    <button id="search-btn">Search</button>
+  </div>
+  <!----search-container---->
+  <div id="result">
+    
+  </div>
+  <!-----result--->
+</div>
+<!---container---->
+
+
+
+    <script>
+
+//API IMDB Rating
+let mykey = "71610ba3";
+
+let movieNameSearch = document.querySelector('#movie-name');
+let searchBtn = document.querySelector('#search-btn');
+let result = document.querySelector('#result');
+
+
+
+//get movie funtion
+let getMovie = () =>{
+  
+  let movieName = movieNameSearch.value;
+  let url = `https://www.omdbapi.com/?t=${movieName}&apikey=${mykey}`;
+  
+  
+  //if input field is empty
+  
+  if(movieName.length <= 0){
+    
+    result.innerHTML = `<h3 class="msg">Please Enter A Movie Name</h3>`;
+    
+  }
+  //if input field is NOT empty
+  else{
+    
+    fetch(url).then((resp) => resp.json()).then((data) =>{
+      
+      //if movie exists in database
+      if(data.Response == "True"){
+        result.innerHTML = `
+      <div class="info">
+        <img src=${data.Poster} class="poster">
+        <div>
+          <h2>${data.Title}</h2>
+          <div class="rating">
+            <img src="https://static.vecteezy.com/system/resources/thumbnails/009/342/559/small/mobile-game-golden-star-clipart-design-illustration-free-png.png">
+            <h4>${data.imdbRating}</h4>
+          </div>
+          <!---rating--->
+          
+          <div class="details">
+            <span>${data.Rated}</span>
+            <span>${data.Year}</span>
+            <span>${data.Runtime}</span>
+          </div>
+          <!----details---->
+          
+          <div class="genre">
+            <div>${data.Genre}</div>
+          </div>
+          <!-----genre---->
+          
+          <p class="boxOffice">BoxOffice: <span style="color:#FF3434;">${data.BoxOffice}</span></p>
+        </div>
+      </div>
+      <!----info--->
+      <h3>StoryLine :</h3>
+      <p>${data.Plot}</p>
+      <h3>Cast :</h3>
+      <p>${data.Actors}</p>
+      <h3>Director :</h3>
+      <p>${data.Director}</p>
+      `;
+      }
+      //if movie does NOT exists in database
+      else{
+        result.innerHTML = `<h3 class="msg">${data.Error}</h3>`;
+      }
+      
+      
+      
+    })
+    //if error occurs
+    .catch(() => {
+      result.innerHTML = `<h3 class="msg">Error Occured</h3>`;
+    });
+    
+  }
+
+}
+
+
+searchBtn.addEventListener("click", getMovie);
+
+
+window.addEventListener("load", getMovie);
+    </script>
+
