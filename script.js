@@ -1,5 +1,5 @@
 // Fetch data from Google Sheets API
-const SHEET_URL = 'https://sheets.googleapis.com/v4/spreadsheets/1eFNyOTc1sjFwoBYA5FzB4f-ecGs0w-COjOZ_mXLWBbo/values/Sheet1!A2:I100?key=YOUR_API_KEY';
+const SHEET_URL = 'https://sheets.googleapis.com/v4/spreadsheets/1eFNyOTc1sjFwoBYA5FzB4f-ecGs0w-COjOZ_mXLWBbo/values/Sheet1!A1:I100?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
 
 // Function to fetch books data
 async function fetchBooks() {
