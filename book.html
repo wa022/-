@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Details</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        body {
+            background: #000;
+            color: #eee;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .book-details {
+            background: #2C2C2C;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px #000;
+            overflow: hidden;
+        }
+
+        .book-details img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .book-details h2 {
+            color: #eee;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .book-details p {
+            color: #a0a0a0;
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .book-details .rating {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .book-details .rating img {
+            width: 30px;
+        }
+
+        .book-details .summary {
+            color: #eee;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .book-details img {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="book-details" id="book-details">
+            <!-- Book details will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        const title = getParameterByName('title');
+
+        const sheetUrl = 'https://sheets.googleapis.com/v4/spreadsheets/1eFNyOTc1sjFwoBYA5FzB4f-ecGs0w-COjOZ_mXLWBbo/values/Sheet1!A1:I100?key=YOUR_API_KEY';
+
+        const bookDetailsContainer = document.getElementById('book-details');
+
+        // Fetch specific book details from Google Sheets API
+        fetch(sheetUrl)
+            .then(response => response.json())
+            .then(data => {
+                const booksData = data.values.slice(1); // Exclude header row
+                
+                const book = booksData.find(book => book[0] === title);
+
+                if (book) {
+                    const [_, cover, author, pages, genre, releaseDate, rating, summary, review] = book;
+                    
+                    // Display book details
+                    bookDetailsContainer.innerHTML = `
+                        <img src="${cover}" alt="${title} Cover">
+                        <h2>${title}</h2>
+                        <div class="rating">
+                            <img src="https://static.vecteezy.com/system/resources/thumbnails/009/342/559/small/mobile-game-golden-star-clipart-design-illustration-free-png.png">
+                            <h4>${rating}</h4>
+                        </div>
+                        <p><strong>Author:</strong> ${author}</p>
+                        <p><strong>Pages:</strong> ${pages}</p>
+                        <p><strong>Genre:</strong> ${genre}</p>
+                        <p><strong>Release Date:</strong> ${releaseDate}</p>
+                        <p class="summary">${summary}</p>
+                        <p><strong>Review:</strong> ${review}</p>
+                    `;
+                } else {
+                    bookDetailsContainer.innerHTML = '<p>Book not found.</p>';
+                }
+            })
+            .catch(error => console.error('Error fetching book details:', error));
+    </script>
+</body>
+</html>
